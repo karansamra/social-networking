@@ -26,3 +26,5 @@ Route::get('privacy', array('as' => 'privacy', function()
 {
     return View::make('pages/privacy');
 }));
+
+Route::resource('posts', 'PostController');

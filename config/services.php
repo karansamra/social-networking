@@ -38,7 +38,7 @@ return [
     'facebook' => [
         'client_id' => '948646981978423',
         'client_secret' => '96cd9e24f5256a9415ec1d40bd449ae3',
-        'redirect' => 'http://www.socialnetworking.dev/callback',
+        'redirect' => 'http://socialnetworking.example/callback',
     ],
 
 ];
