@@ -28,9 +28,15 @@
                         </div>
                     </form>
                 </div>
-
-                <div class="card-body">
-
+            </div>
+            {{--This card holds the list of Posts of this user.--}}
+            <div class="card card-posts-list">
+                <div class="card-header">Posts</div>
+                <div class="card-body" id = "listOfPosts">
+                    <div class="container">
+                        <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
+                    </div>
+                    <img src="http://socialnetworking.example/storage/images/dSXs7mhTpu69VcbgyUEILu6VJAL4bbiUBjvraddQ.png" class="img-fluid" alt="Responsive image"/>
                 </div>
             </div>
         </div>

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Post;
 use App\Image;
 use League\Flysystem\Exception;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -19,7 +20,7 @@ class PostController extends Controller
      */
     public function __construct()
     {
-        //$this->middleware('auth');
+        $this->middleware('auth');
     }
 
     /**
@@ -43,13 +44,26 @@ class PostController extends Controller
                 'images.name as imagePath']);
 
         $resultantArray = [];
-        foreach ($posts as $key=>$post) {
-            $resultantArray[$key]['postId'] = $post->postId;
-            $resultantArray[$key]['postTxt'] = $post->postTxt;
-            $resultantArray[$key]['postsUserId'] = $post->postsUserId;
-            $resultantArray[$key]['postsCreatedAt'] = $post->postsCreatedAt;
-            $resultantArray[$key]['imagePath'] = $post->imagePath;
+        if ($posts) {
+            foreach ($posts as $key=>$post) {
+                $resultantArray[$key]['postId'] = $post->postId;
+                $resultantArray[$key]['postTxt'] = $post->postTxt;
+                $resultantArray[$key]['postsUserId'] = $post->postsUserId;
+                $resultantArray[$key]['postsCreatedAt'] = $post->postsCreatedAt;
+                if ($post->imagePath) {
+                    $resultantArray[$key]['imagePath'] = Storage::url($post->imagePath);
+                } else {
+                    $resultantArray[$key]['imagePath'] = null;
+                }
+
+            }
         }
+
+        return response()->json(
+            ["message" => "List of Posts", "status" => 1, "data" => $resultantArray]
+        );
+
+
     }
 
     /**
@@ -100,7 +114,7 @@ class PostController extends Controller
             if ($request->hasFile('postImage')) {
 
                 // Moving image into the directory.
-                $path = $request->postImage->store('images');
+                $path = $request->postImage->store('images', 'public');
 
                 // Saving the data of the image.
                 $imageObj = new Image();
