@@ -1,6 +1,16 @@
-# social-networking
+# Social Networking Sample
 
-A social networking demo. Includes Login, Registration, Registration and Login using Facebook. Posting content, Sending notification to the followers for newly posted content.
+A social networking demo. Includes 
+```
+Login 
+Registration 
+Registration and Login using Facebook 
+Posting content 
+Real Time Push notification to the followers for newly posted content
+Details page of the Post
+List of users
+Follow the user
+```
 
 ## Getting Started
 
@@ -39,57 +49,29 @@ until finished
 
 End with an example of getting some data out of the system or using it for a little demo
 
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
 ## Deployment
 
 Add additional notes about how to deploy this on a live system
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* PHP 7.1.9
+* Laravel 5.6
+* Javascript
+* NPM
+* Composer
+* Eloquent
+* Blade
+* MySQL server 5.7.19
+* Apache 2.4
+* Pusher
 
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Jaskaran Singh** - *Initial work* - [iLook](www.ilook.com)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+## Screenshots
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
+* See https://github.com/karansamra/social-networking/tree/master/screenshots
 
