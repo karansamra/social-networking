@@ -22,10 +22,12 @@ Route::get('/callback', 'SocialAuthFacebookController@callback');
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+Route::resource('posts', 'PostController');
+Route::get('/post-detail/{id}', 'PostController@detail')->name('Post Detail');
+
+Route::resource('users', 'UserController');
+
 Route::get('privacy', array('as' => 'privacy', function()
 {
     return View::make('pages/privacy');
 }));
-
-Route::resource('posts', 'PostController');
-Route::get('/post-detail/{id}', 'PostController@detail')->name('Post Detail');

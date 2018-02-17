@@ -31,41 +31,9 @@ class PostController extends Controller
     public function index()
     {
         // Get Posts by user id.
-        $posts = Post::leftJoin('images', function($join) {
-                $join->on('posts.id', '=', 'images.post_id');
-            })
-            ->leftJoin('users', function($join) {
-                $join->on('posts.user_id', '=', 'users.id');
-            })
-            ->where('user_id', Auth::id())
-            ->orderBy('posts.created_at', 'desc')
-            ->take(20)
-            ->get(['posts.id as postId',
-                'posts.txt as postTxt',
-                'posts.user_id as postsUserId',
-                'posts.created_at as postsCreatedAt',
-                'users.name as nameOfUser',
-                'images.name as imagePath']);
-
-        $resultantArray = [];
-        if ($posts->count()) {
-            foreach ($posts as $key=>$post) {
-                $resultantArray[$key]['postId'] = $post->postId;
-                $resultantArray[$key]['postTxt'] = $post->postTxt;
-                $resultantArray[$key]['postsUserId'] = $post->postsUserId;
-                $resultantArray[$key]['postsCreatedAt'] = self::nicetime_2($post->postsCreatedAt);
-                $resultantArray[$key]['nameOfUser'] = $post->nameOfUser;
-                if ($post->imagePath) {
-                    $resultantArray[$key]['imagePath'] = Storage::url($post->imagePath);
-                } else {
-                    $resultantArray[$key]['imagePath'] = null;
-                }
-
-            }
-        }
-
         return response()->json(
-            ["message" => "List of Posts", "status" => 1, "data" => $resultantArray]
+            ["message" => "List of Posts", "status" => 1,
+                "data" => self::getPostsData(['user_id', Auth::id()], 20)]
         );
     }
 
@@ -145,82 +113,17 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        // Get Posts by user id.
-        $posts = Post::leftJoin('images', function($join) {
-                $join->on('posts.id', '=', 'images.post_id');
-            })
-            ->leftJoin('users', function($join) {
-                $join->on('posts.user_id', '=', 'users.id');
-            })
-            ->where('posts.id', $id)
-            ->orderBy('posts.created_at', 'desc')
-            ->take(1)
-            ->get(['posts.id as postId',
-                'posts.txt as postTxt',
-                'posts.user_id as postsUserId',
-                'posts.created_at as postsCreatedAt',
-                'users.name as nameOfUser',
-                'images.name as imagePath']);
-
-        $resultantArray = [];
-        if ($posts->count()) {
-            foreach ($posts as $key=>$post) {
-                $resultantArray[$key]['postId'] = $post->postId;
-                $resultantArray[$key]['postTxt'] = $post->postTxt;
-                $resultantArray[$key]['postsUserId'] = $post->postsUserId;
-                $resultantArray[$key]['postsCreatedAt'] = self::nicetime_2($post->postsCreatedAt);
-                $resultantArray[$key]['nameOfUser'] = $post->nameOfUser;
-                if ($post->imagePath) {
-                    $resultantArray[$key]['imagePath'] = Storage::url($post->imagePath);
-                } else {
-                    $resultantArray[$key]['imagePath'] = null;
-                }
-
-            }
-        }
-
+        // Get Posts by post id.
         return response()->json(
-            ["message" => "Post Detail.", "status" => 1, "data" => $resultantArray]
+            ["message" => "Post Detail.", "status" => 1, "data" => self::getPostsData(['posts.id', $id], 1)]
         );
     }
 
     public function detail($id) {
 
-        // Get Posts by user id.
-        $posts = Post::leftJoin('images', function($join) {
-            $join->on('posts.id', '=', 'images.post_id');
-        })
-            ->leftJoin('users', function($join) {
-                $join->on('posts.user_id', '=', 'users.id');
-            })
-            ->where('posts.id', $id)
-            ->orderBy('posts.created_at', 'desc')
-            ->take(1)
-            ->get(['posts.id as postId',
-                'posts.txt as postTxt',
-                'posts.user_id as postsUserId',
-                'posts.created_at as postsCreatedAt',
-                'users.name as nameOfUser',
-                'images.name as imagePath']);
-
-        $resultantArray = [];
-        if ($posts->count()) {
-            foreach ($posts as $key=>$post) {
-                $resultantArray[$key]['postId'] = $post->postId;
-                $resultantArray[$key]['postTxt'] = $post->postTxt;
-                $resultantArray[$key]['postsUserId'] = $post->postsUserId;
-                $resultantArray[$key]['postsCreatedAt'] = self::nicetime_2($post->postsCreatedAt);
-                $resultantArray[$key]['nameOfUser'] = $post->nameOfUser;
-                if ($post->imagePath) {
-                    $resultantArray[$key]['imagePath'] = Storage::url($post->imagePath);
-                } else {
-                    $resultantArray[$key]['imagePath'] = null;
-                }
-
-            }
-        }
-
-        return view('post-detail')->with('data', $resultantArray);
+        // Get Posts by post id.
+        return view('post-detail')->with('data',
+            self::getPostsData(['posts.id', $id], 1));
     }
 
 
@@ -317,5 +220,49 @@ class PostController extends Controller
         }
 
         return "$difference $periods[$j] {$tense}";
+    }
+
+    /**
+     * Return posts data.
+     * @param $whereColValue
+     * @param $limit
+     * @return array
+     * @version 1.0
+     * @author Jaskaran Singh
+     */
+    private static function getPostsData($whereColValue, $limit) {
+        $posts = Post::leftJoin('images', function($join) {
+                $join->on('posts.id', '=', 'images.post_id');
+            })
+            ->leftJoin('users', function($join) {
+                $join->on('posts.user_id', '=', 'users.id');
+            })
+            ->where($whereColValue[0], $whereColValue[1])
+            ->orderBy('posts.created_at', 'desc')
+            ->take($limit)
+            ->get(['posts.id as postId',
+                'posts.txt as postTxt',
+                'posts.user_id as postsUserId',
+                'posts.created_at as postsCreatedAt',
+                'users.name as nameOfUser',
+                'images.name as imagePath']);
+
+        $resultantArray = [];
+        if ($posts->count()) {
+            foreach ($posts as $key=>$post) {
+                $resultantArray[$key]['postId'] = $post->postId;
+                $resultantArray[$key]['postTxt'] = $post->postTxt;
+                $resultantArray[$key]['postsUserId'] = $post->postsUserId;
+                $resultantArray[$key]['postsCreatedAt'] = self::nicetime_2($post->postsCreatedAt);
+                $resultantArray[$key]['nameOfUser'] = $post->nameOfUser;
+                if ($post->imagePath) {
+                    $resultantArray[$key]['imagePath'] = Storage::url($post->imagePath);
+                } else {
+                    $resultantArray[$key]['imagePath'] = null;
+                }
+
+            }
+        }
+        return $resultantArray;
     }
 }

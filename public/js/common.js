@@ -181,6 +181,37 @@ var post = {
 
 };
 
+
+var user = {
+    follow: function(elem, followedId, followerId) {
+        $.ajax({
+            url: "/users",
+            method: "POST",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                followed: followedId,
+                follower: followerId
+            },
+            dataType: 'json',
+            success: function (result, status, xhr) {
+                if (result.status == 1) {
+                    $(elem).text("Following");
+                    $(elem).removeClass('btn-primary');
+                    $(elem).addClass('btn-dark disabled');
+                    $(elem).removeAttr('onclick');
+                } else {
+                    alert ("An error occurred.");
+                }
+            },
+            error: function (xhr, status, error) {
+                alert ("An error occurred.");
+            }
+        });
+    }
+};
+
 var common = {
     /**
      * Returns the HTML of bootstrap alerts.
