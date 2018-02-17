@@ -28,3 +28,4 @@ Route::get('privacy', array('as' => 'privacy', function()
 }));
 
 Route::resource('posts', 'PostController');
+Route::get('/post-detail/{id}', 'PostController@detail')->name('Post Detail');

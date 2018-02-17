@@ -34,22 +34,27 @@ class PostController extends Controller
         $posts = Post::leftJoin('images', function($join) {
                 $join->on('posts.id', '=', 'images.post_id');
             })
-            ->where('user_id', 2)
+            ->leftJoin('users', function($join) {
+                $join->on('posts.user_id', '=', 'users.id');
+            })
+            ->where('user_id', Auth::id())
             ->orderBy('posts.created_at', 'desc')
             ->take(20)
             ->get(['posts.id as postId',
                 'posts.txt as postTxt',
                 'posts.user_id as postsUserId',
                 'posts.created_at as postsCreatedAt',
+                'users.name as nameOfUser',
                 'images.name as imagePath']);
 
         $resultantArray = [];
-        if ($posts) {
+        if ($posts->count()) {
             foreach ($posts as $key=>$post) {
                 $resultantArray[$key]['postId'] = $post->postId;
                 $resultantArray[$key]['postTxt'] = $post->postTxt;
                 $resultantArray[$key]['postsUserId'] = $post->postsUserId;
-                $resultantArray[$key]['postsCreatedAt'] = $post->postsCreatedAt;
+                $resultantArray[$key]['postsCreatedAt'] = self::nicetime_2($post->postsCreatedAt);
+                $resultantArray[$key]['nameOfUser'] = $post->nameOfUser;
                 if ($post->imagePath) {
                     $resultantArray[$key]['imagePath'] = Storage::url($post->imagePath);
                 } else {
@@ -62,8 +67,6 @@ class PostController extends Controller
         return response()->json(
             ["message" => "List of Posts", "status" => 1, "data" => $resultantArray]
         );
-
-
     }
 
     /**
@@ -123,7 +126,7 @@ class PostController extends Controller
                 $imageObj->save();
             }
             return response()->json(
-                ["message" => "Post has been created.", "status" => 1]
+                ["message" => "Post has been created.", "status" => 1, "postId" => $postObj->id]
             );
         } catch (Exception $e) {
             return response()->json(
@@ -142,8 +145,84 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        //
+        // Get Posts by user id.
+        $posts = Post::leftJoin('images', function($join) {
+                $join->on('posts.id', '=', 'images.post_id');
+            })
+            ->leftJoin('users', function($join) {
+                $join->on('posts.user_id', '=', 'users.id');
+            })
+            ->where('posts.id', $id)
+            ->orderBy('posts.created_at', 'desc')
+            ->take(1)
+            ->get(['posts.id as postId',
+                'posts.txt as postTxt',
+                'posts.user_id as postsUserId',
+                'posts.created_at as postsCreatedAt',
+                'users.name as nameOfUser',
+                'images.name as imagePath']);
+
+        $resultantArray = [];
+        if ($posts->count()) {
+            foreach ($posts as $key=>$post) {
+                $resultantArray[$key]['postId'] = $post->postId;
+                $resultantArray[$key]['postTxt'] = $post->postTxt;
+                $resultantArray[$key]['postsUserId'] = $post->postsUserId;
+                $resultantArray[$key]['postsCreatedAt'] = self::nicetime_2($post->postsCreatedAt);
+                $resultantArray[$key]['nameOfUser'] = $post->nameOfUser;
+                if ($post->imagePath) {
+                    $resultantArray[$key]['imagePath'] = Storage::url($post->imagePath);
+                } else {
+                    $resultantArray[$key]['imagePath'] = null;
+                }
+
+            }
+        }
+
+        return response()->json(
+            ["message" => "Post Detail.", "status" => 1, "data" => $resultantArray]
+        );
     }
+
+    public function detail($id) {
+
+        // Get Posts by user id.
+        $posts = Post::leftJoin('images', function($join) {
+            $join->on('posts.id', '=', 'images.post_id');
+        })
+            ->leftJoin('users', function($join) {
+                $join->on('posts.user_id', '=', 'users.id');
+            })
+            ->where('posts.id', $id)
+            ->orderBy('posts.created_at', 'desc')
+            ->take(1)
+            ->get(['posts.id as postId',
+                'posts.txt as postTxt',
+                'posts.user_id as postsUserId',
+                'posts.created_at as postsCreatedAt',
+                'users.name as nameOfUser',
+                'images.name as imagePath']);
+
+        $resultantArray = [];
+        if ($posts->count()) {
+            foreach ($posts as $key=>$post) {
+                $resultantArray[$key]['postId'] = $post->postId;
+                $resultantArray[$key]['postTxt'] = $post->postTxt;
+                $resultantArray[$key]['postsUserId'] = $post->postsUserId;
+                $resultantArray[$key]['postsCreatedAt'] = self::nicetime_2($post->postsCreatedAt);
+                $resultantArray[$key]['nameOfUser'] = $post->nameOfUser;
+                if ($post->imagePath) {
+                    $resultantArray[$key]['imagePath'] = Storage::url($post->imagePath);
+                } else {
+                    $resultantArray[$key]['imagePath'] = null;
+                }
+
+            }
+        }
+
+        return view('post-detail')->with('data', $resultantArray);
+    }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -177,5 +256,66 @@ class PostController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+
+    /**
+     * A time difference function that outputs
+     * the time passed in facebook's
+     * style: 1 day ago, or 4 months ago.
+     * if date passed is between 24 hours, then return string such as "12:54 pm"
+     *
+     * @author Jaskaran Singh [actual author : yasmary at gmail dot com]
+     * @param datetime $date [format : "2009-03-04 17:45"]
+     * @return string
+     * @see http://php.net/manual/en/function.time.php
+     */
+    public static function nicetime_2($date)
+    {
+        if (empty($date)) {
+            return "No date provided";
+        }
+
+        $periods = array("second", "minute", "hour", "day", "week", "month", "year", "decade");
+        $lengths = array("60", "60", "24", "7", "4.35", "12", "10");
+
+        $now = time();
+        $unix_date = \Datetime::createfromformat("Y-m-d H:i:s", $date)->getTimestamp();
+
+        // check validity of date
+        if (empty($unix_date)) {
+            return "Bad date";
+        }
+
+        //if date passed is between 24 hours, then return string such as "12:54 pm"
+        $today_max_obj = \Datetime::createfromformat('H:i:s', '23:59:59');
+        $today_min_obj = \Datetime::createfromformat('H:i:s', '00:00:00');
+        $dateTime_obj = \Datetime::createfromformat('Y-m-d H:i', $date);
+
+        if ($today_max_obj > $dateTime_obj && $dateTime_obj > $today_min_obj) {
+            return $dateTime_obj->format("h:i A");
+        }
+
+        // is it future date or past date
+        if ($now > $unix_date) {
+            $difference = $now - $unix_date;
+            $tense = "ago";
+
+        } else {
+            $difference = $unix_date - $now;
+            $tense = "from now";
+        }
+
+        for ($j = 0; $difference >= $lengths[$j] && $j < count($lengths) - 1; $j++) {
+            $difference /= $lengths[$j];
+        }
+
+        $difference = round($difference);
+
+        if ($difference != 1) {
+            $periods[$j] .= "s";
+        }
+
+        return "$difference $periods[$j] {$tense}";
     }
 }
