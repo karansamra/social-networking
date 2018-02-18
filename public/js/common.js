@@ -260,14 +260,15 @@ var notification = {
                 // Do nothing.
             },
             error: function (xhr, status, error) {
-                alert ("An error occurred.");
+                // Do nothing.
             }
         });
+
         // Redirect at same time.
         window.location.href = "/post-detail/"+postId;
     }
 }
 
-$(document).ready(function(){
+$(document).ready(function() {
     post.get();
 });

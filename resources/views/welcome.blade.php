@@ -79,6 +79,12 @@
 
             <div class="content">
                 <div class="title m-b-md">
+                    Social Networking
+                </div>
+                <div class="title m-b-md">
+                    With
+                </div>
+                <div class="title m-b-md">
                     Laravel
                 </div>
 

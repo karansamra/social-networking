@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
 use League\Flysystem\Exception;
 use Illuminate\Support\Facades\Storage;
+use App\Events\NewPostEvent;
 
 use App\Post;
 use App\Image;
@@ -159,6 +160,16 @@ class PostController extends Controller
                     $notifObj->post_id  = $postId;
                     $notifObj->read     = 0;
                     $notifObj->save();
+
+                    //----------------------------------------
+                    // Trigger event for pusher notifications.
+                    //----------------------------------------
+                    event(new NewPostEvent(
+                            Auth::user()->name. " has posted a new Post.",
+                            $postId,
+                            $follower
+                        )
+                    );
                 }
             break;
         }

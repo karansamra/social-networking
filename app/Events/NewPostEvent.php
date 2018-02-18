@@ -10,7 +10,9 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class PostPusherEvent
+
+
+class NewPostEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -18,21 +20,23 @@ class PostPusherEvent
      * Only (!) Public members will be serialized to JSON and sent to Pusher
      **/
     public $message;
-    public $postId;
-    public $follower;
+    public $id;
+    public $for_user_id;
 
     /**
      * Create a new event instance.
      * @param string $message (notification description)
      * @param integer $id (notification id)
      * @param integer $for_user_id (receiver's id)
+     * @author hkaur5
      * @return void
      */
-    public function __construct($message,$postId, $follower)
+    public function __construct($message,$id, $for_user_id)
     {
         $this->message = $message;
-        $this->postId = $postId;
-        $this->follower = $follower;
+        $this->id = $id;
+        $this->for_user_id = $for_user_id;
+
     }
 
     /**
@@ -42,10 +46,6 @@ class PostPusherEvent
      */
     public function broadcastOn()
     {
-        //We have created names of channel on basis of user's id who
-        //will receive data from this class.
-        //See frontend pusher code to see how we have used this channel
-        //for intended user.
-        return ['post-notification-channel'];
+        return new Channel('post_for_'.$this->for_user_id);
     }
 }

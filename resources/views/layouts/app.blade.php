@@ -71,6 +71,47 @@
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('js/common.js') }}"></script>
 
+    <script>
+        // ===============================================
+        // Socket Connection and browser notification code
+        // ===============================================
+
+        // request permission on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!Notification) {
+                alert('Desktop notifications not available in your browser. Try Chromium.');
+                return;
+            }
+
+            if (Notification.permission !== "granted")
+                Notification.requestPermission();
+        });
+
+        function notifyUser(message) {
+            if (Notification.permission !== "granted")
+                Notification.requestPermission();
+            else {
+                var notification = new Notification('Notification title', {
+                    icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
+                    body: message,
+                });
+
+                notification.onclick = function () {
+
+                };
+            }
+        }
+
+        Echo.channel('post_for_'+$('#loggedInUserId').val())
+                .listen('postNotifications', (e) => {
+            //alert('Notification event');
+
+            notifyUser(e.message);
+
+        });
+
+
+    </script>
 
 </body>
 </html>
