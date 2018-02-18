@@ -242,6 +242,32 @@ var common = {
     }
 };
 
+
+var notification = {
+    markRead: function(notifId, postId) {
+        $.ajax({
+            url: "/notifications/"+notifId+'/edit',
+            method: "GET",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                notifId: notifId,
+                postId: postId
+            },
+            dataType: 'json',
+            success: function (result, status, xhr) {
+                // Do nothing.
+            },
+            error: function (xhr, status, error) {
+                alert ("An error occurred.");
+            }
+        });
+        // Redirect at same time.
+        window.location.href = "/post-detail/"+postId;
+    }
+}
+
 $(document).ready(function(){
     post.get();
 });

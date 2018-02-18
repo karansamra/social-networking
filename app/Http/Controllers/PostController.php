@@ -5,14 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
-use App\Post;
-use App\Image;
 use League\Flysystem\Exception;
 use Illuminate\Support\Facades\Storage;
 
+use App\Post;
+use App\Image;
+use App\Follow;
+use App\Notification;
+
 class PostController extends Controller
 {
-
     /**
      * Create a new controller instance.
      *
@@ -93,6 +95,12 @@ class PostController extends Controller
                 $imageObj->name = $path;
                 $imageObj->save();
             }
+
+            self::sendNotification(1,
+                self::getUserWhoAreFollowingMe(Auth::id()),
+                $postObj->id
+                );
+
             return response()->json(
                 ["message" => "Post has been created.", "status" => 1, "postId" => $postObj->id]
             );
@@ -101,9 +109,61 @@ class PostController extends Controller
                 ["message" => "An error has occurred!", "status" => 3]
             );
         }
-
-
     }
+
+
+    /**
+     * Get all the users who are following Logged in
+     * user.
+     *
+     * @param $loggedInUserId
+     * @return array
+     * @version 1.0
+     * @author Jaskaran Singh
+     */
+    public static function getUserWhoAreFollowingMe ($loggedInUserId) {
+        // All user who are following this (Logged in) user.
+        $following = Follow::where('followed', $loggedInUserId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $peopleIAmFollowedBy = [];
+        if($following->count()) {
+            foreach ($following as $user) {
+                $peopleIAmFollowedBy[] = $user->follower;
+            }
+        }
+
+        return $peopleIAmFollowedBy;
+    }
+
+    /**
+     * Sends notification to the users according to the
+     * type parameter.
+     *
+     * @param $type [1 = new post notification]
+     * @param array $toUsers [1, 2, 3, 4]
+     * @param integer $postId [ID of the post for which notification is.]
+     * @version 1.0
+     * @author Jaskaran Singh
+     */
+    public static function sendNotification($type, $toUsers = array(), $postId) {
+
+        switch ($type) {
+            case 1:
+                foreach ($toUsers as $follower) {
+                    // Save into notification table.
+                    $notifObj = new Notification();
+                    $notifObj->type     = 1;
+                    $notifObj->to_user  = $follower;
+                    $notifObj->post_id  = $postId;
+                    $notifObj->read     = 0;
+                    $notifObj->save();
+                }
+            break;
+        }
+    }
+
 
     /**
      * Display the specified resource.

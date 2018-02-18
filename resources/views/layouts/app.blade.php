@@ -39,6 +39,7 @@
                         @else
                             <li><a class="nav-link" href="{{route('home')}}">Post</a></li>
                             <li><a class="nav-link" href="{{route('users.index')}}">Users</a></li>
+                            <li><a class="nav-link" href="{{route('notifications.index')}}">Notifications</a></li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     {{ Auth::user()->name }} <span class="caret"></span>
@@ -60,14 +61,16 @@
                 </div>
             </div>
         </nav>
-
         <main class="py-4">
             @yield('content')
         </main>
+        <input type="hidden" value = "{{ Auth::id() }}" id = "loggedInUserId">
     </div>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('js/common.js') }}"></script>
+
+
 </body>
 </html>
