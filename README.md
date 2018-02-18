@@ -33,25 +33,61 @@ JSON PHP Extension
 
 ### Installing
 
-A step by step series of examples that tell you have to get a development env running
-
-Say what the step will be
-
+#### For Facebook Login you need to install the certificate
 ```
-Give the example
+ssl certificate/cacert.pem
 ```
-
-And repeat
-
+Here:
 ```
-until finished
+D:\wamp64\bin\php\php7.1.9\extras\ssl
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+#### To install all the PHP packages and Frontend Packages you need to run:
+```
+composer install
+npm install
+```
+
+
+#### You should make a virtual host on your system with, the name could social-networking.example
+Entry in apache vhosts file
+```
+<VirtualHost 127.0.0.3:80>
+	ServerName socialnetworking.example
+	DocumentRoot "d:/wamp64/www/social-networking/public"
+	<Directory  "d:/wamp64/www/social-networking/public/">
+		Options +Indexes +Includes +FollowSymLinks +MultiViews
+		AllowOverride All
+		Require local
+	</Directory>
+</VirtualHost>
+```
+Dont forget to update host file on windows.
+
+#### The public disk is intended for files that are going to be publicly accessible. By default, the  public disk uses the local driver and stores these files in storage/app/public. To make them accessible from the web, you should create a symbolic link from public/storage to  storage/app/public. This convention will keep your publicly accessible files in one directory that can be easily shared across deployments when using zero down-time deployment systems like Envoyer.
+
+To create the symbolic link, you may use the storage:link Artisan command:
+```
+php artisan storage:link
+```
+
+
+#### change the env.example file to .env
+
+#### Run database migrations, this will provide you fresh and empty database.
+
+```
+php artisan migrate
+```
+
 
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
+Following commands helps during development:
+```
+composer dump-autoload
+npm watch
+```
 
 ## Built With
 
