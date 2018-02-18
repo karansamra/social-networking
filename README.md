@@ -1,6 +1,16 @@
-# social-networking
+# Social Networking Sample
 
-A social networking demo. Includes Login, Registration, Registration and Login using Facebook. Posting content, Sending notification to the followers for newly posted content.
+A social networking demo. Includes 
+```
+Login 
+Registration 
+Registration and Login using Facebook 
+Posting content 
+Real Time Push notification to the followers for newly posted content
+Details page of the Post
+List of users
+Follow the user
+```
 
 ## Getting Started
 
@@ -23,73 +33,81 @@ JSON PHP Extension
 
 ### Installing
 
-A step by step series of examples that tell you have to get a development env running
-
-Say what the step will be
-
+#### For Facebook Login you need to install the certificate
 ```
-Give the example
+ssl certificate/cacert.pem
 ```
-
-And repeat
-
+Here:
 ```
-until finished
+D:\wamp64\bin\php\php7.1.9\extras\ssl
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
+#### To install all the PHP packages and Frontend Packages you need to run:
 ```
-Give an example
+composer install
+npm install
 ```
 
-### And coding style tests
 
-Explain what these tests test and why
+#### You should make a virtual host on your system with, the name could social-networking.example
+Entry in apache vhosts file
+```
+<VirtualHost 127.0.0.3:80>
+	ServerName socialnetworking.example
+	DocumentRoot "d:/wamp64/www/social-networking/public"
+	<Directory  "d:/wamp64/www/social-networking/public/">
+		Options +Indexes +Includes +FollowSymLinks +MultiViews
+		AllowOverride All
+		Require local
+	</Directory>
+</VirtualHost>
+```
+Dont forget to update host file on windows.
+
+#### The public disk is intended for files that are going to be publicly accessible. By default, the  public disk uses the local driver and stores these files in storage/app/public. To make them accessible from the web, you should create a symbolic link from public/storage to  storage/app/public. This convention will keep your publicly accessible files in one directory that can be easily shared across deployments when using zero down-time deployment systems like Envoyer.
+
+To create the symbolic link, you may use the storage:link Artisan command:
+```
+php artisan storage:link
+```
+
+
+#### change the env.example file to .env
+
+#### Run database migrations, this will provide you fresh and empty database.
 
 ```
-Give an example
+php artisan migrate
 ```
+
 
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
+Following commands helps during development:
+```
+composer dump-autoload
+npm watch
+```
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* PHP 7.1.9
+* Laravel 5.6
+* Javascript
+* NPM
+* Composer
+* Eloquent
+* Blade
+* MySQL server 5.7.19
+* Apache 2.4
+* Pusher
 
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Jaskaran Singh** - *Initial work* - [iLook](www.ilook.com)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+## Screenshots
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
+* See https://github.com/karansamra/social-networking/tree/master/screenshots
 
