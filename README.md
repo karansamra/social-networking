@@ -9,6 +9,7 @@ Posting content
 Real Time Push notification to the followers for newly posted content
 Details page of the Post
 List of users
+Listing of notifications
 Follow the user
 ```
 
