@@ -272,3 +272,34 @@ var notification = {
 $(document).ready(function() {
     post.get();
 });
+
+// ===============================================
+// Socket Connection and browser notification code
+// ===============================================
+// request permission on page load
+document.addEventListener('DOMContentLoaded', function () {
+    if (!Notification) {
+        alert('Desktop notifications not available in your browser. Try Chromium.');
+        return;
+    }
+
+    if (Notification.permission !== "granted")
+        Notification.requestPermission();
+});
+
+function notifyUser(message) {
+    if (Notification.permission !== "granted")
+        Notification.requestPermission();
+    else {
+        var notification = new Notification('New Post', {
+            icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
+            body: message,
+        });
+    }
+}
+
+Echo.channel('post_for_'+$('#loggedInUserId').val())
+    .listen('postNotifications', (e) => {
+    //alert('Notification event');
+    notifyUser(e.message);
+});
